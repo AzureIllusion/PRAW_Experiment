@@ -15,4 +15,6 @@ reddit = praw.Reddit(client_id=client_ID_input,
 subreddit = reddit.subreddit(subreddit_input)
 
 for comment in subreddit.stream.comments():
-    print(comment.body)
+    print(16*'-')
+    print(comment.parent_id)
+    print(comment.id)

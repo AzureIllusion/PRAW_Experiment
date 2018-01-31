@@ -18,22 +18,29 @@ hot_posts = subreddit.hot(limit=5)
 
 for submission in hot_posts:
     if not submission.stickied:
-        print(submission)
-        print('Title: {}, \n'
-              'Original Poster: {} \n'
-              'Vp votes: {}, Down votes: {} \n'
-              'Viewed before: {}'.format(submission.title,
-                                         submission.author,
-                                         submission.ups,
-                                         submission.downs,
-                                         submission.visited))
+        print(dir(submission))
+        print('Title: {} \n'
+              'Author: {} \n'
+              'Created UTC: {} \n'
+              'Name: {} \n'
+              'Subreddit: {}'.format(submission.title,
+                                     submission.author,
+                                     submission.created_utc,
+                                     submission.name,
+                                     submission.subreddit))
 
         submission.comments.replace_more(limit=0)
 
         for comment in submission.comments:
             print(16 * '-')
-            print('Parent ID: ', comment.parent())
-            print('Comment ID: ', comment.id)
-            print(comment.body)
-
+            print(dir(comment))
+            print('Parent ID: {} \n'
+                  'Author: {} \n'
+                  'Created UTC: {} \n'
+                  'Name: {} \n'
+                  'Subreddit: {}'.format(comment.parent_id,
+                                         comment.author,
+                                         comment.created_utc,
+                                         comment.name,
+                                         comment.subreddit))
     print(48 * '-')
