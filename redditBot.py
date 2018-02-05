@@ -1,4 +1,11 @@
 import praw
+import pymongo
+from pymongo import MongoClient
+
+client = MongoClient()
+db = client.redditbotdb
+submissions = db.submissions
+comments = db.comments
 
 client_ID_input = input('Client ID: ')
 client_secret_input = input('Client Secret: ')
@@ -14,33 +21,39 @@ reddit = praw.Reddit(client_id=client_ID_input,
 
 subreddit = reddit.subreddit(subreddit_input)
 
-hot_posts = subreddit.hot(limit=5)
-
-for submission in hot_posts:
+for submission in subreddit.hot(limit=5):
     if not submission.stickied:
-        print(dir(submission))
+        # print(dir(submission))
         print('Title: {} \n'
               'Author: {} \n'
               'Created UTC: {} \n'
-              'Name: {} \n'
+              'Fullame: {} \n'
               'Subreddit: {}'.format(submission.title,
                                      submission.author,
                                      submission.created_utc,
-                                     submission.name,
+                                     submission.fullname,
                                      submission.subreddit))
 
-        submission.comments.replace_more(limit=0)
+        sub = {'title': submission.title,
+               'author': submission.author,
+               'time': submission.created_utc,
+               'fullname': submission.fullname,
+               'subreddit': submission.subreddit
+               }
+        submissions.insert({'submission_id': submission.fullname}, sub)
 
-        for comment in submission.comments:
+
+        submission.comments.replace_more()
+        for comment in submission.comments.list():
             print(16 * '-')
-            print(dir(comment))
+            # print(dir(comment))
             print('Parent ID: {} \n'
                   'Author: {} \n'
                   'Created UTC: {} \n'
-                  'Name: {} \n'
+                  'Fullname: {} \n'
                   'Subreddit: {}'.format(comment.parent_id,
                                          comment.author,
                                          comment.created_utc,
-                                         comment.name,
+                                         comment.fullname,
                                          comment.subreddit))
     print(48 * '-')
