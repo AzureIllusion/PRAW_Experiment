@@ -1,5 +1,4 @@
 import praw
-import pymongo
 from pymongo import MongoClient
 
 client = MongoClient()
@@ -34,14 +33,13 @@ for submission in subreddit.hot(limit=5):
                                      submission.fullname,
                                      submission.subreddit))
 
-        sub = {'title': submission.title,
-               'author': submission.author,
+        sub = {"title": submission.title,
+               'author': str(submission.author),
                'time': submission.created_utc,
                'fullname': submission.fullname,
-               'subreddit': submission.subreddit
+               'subreddit': str(submission.subreddit)
                }
-        submissions.insert({'submission_id': submission.fullname}, sub)
-
+        submissions.insert_one(sub)
 
         submission.comments.replace_more()
         for comment in submission.comments.list():
@@ -56,4 +54,13 @@ for submission in subreddit.hot(limit=5):
                                          comment.created_utc,
                                          comment.fullname,
                                          comment.subreddit))
+
+            com = {'parent_id': comment.parent_id,
+                   'author': str(comment.author),
+                   'time': comment.created_utc,
+                   'fullname': comment.fullname,
+                   'subreddit': str(comment.subreddit)
+                   }
+            comments.insert(com)
+
     print(48 * '-')
